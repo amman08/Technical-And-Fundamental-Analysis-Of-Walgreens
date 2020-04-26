@@ -1,0 +1,34 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from pandas_datareader import data as web
+import pandas_ta
+
+def get_adj_close(ticker, start, end):
+    start = start
+    end = end
+    info = web.DataReader(ticker, data_source='yahoo', start=start, end=end)['Adj Close']
+    return pd.DataFrame(info)
+WBA= get_adj_close('wba', '1/1/2016', '31/03/2020')
+#print(WBA)
+
+# SMA
+WBA['5 Day SMA'] = WBA['Adj Close'].rolling(window=5).mean()
+WBA['21 Day SMA'] = WBA['Adj Close'].rolling(window=21).mean()
+WBA['50 Day SMA'] = WBA['Adj Close'].rolling(window=50).mean()
+WBA['144 Day SMA'] = WBA['Adj Close'].rolling(window=144).mean()
+
+WBA[['Adj Close', '5 Day SMA','21 Day SMA','50 Day SMA','144 Day SMA' ]].plot(figsize=(15,9))
+plt.title('Simple Moving Average for WBA')
+plt.ylabel('Price (USD)')
+plt.show()
+
+#EMA
+WBA['5 Day EMA'] =WBA['Adj Close'].ewm(span=5).mean()
+WBA['21 Day EMA'] =WBA['Adj Close'].ewm(span=21).mean()
+WBA['50 Day EMA'] =WBA['Adj Close'].ewm(span=50).mean()
+WBA['144 Day EMA'] =WBA['Adj Close'].ewm(span=144).mean()
+
+WBA[['Adj Close', '20 Day EMA','21 Day EMA','50 Day EMA','144 Day EMA']].plot(figsize=(12,6))
+plt.title('EMA for WBA')
+plt.ylabel('Price (USD)')
+plt.show()

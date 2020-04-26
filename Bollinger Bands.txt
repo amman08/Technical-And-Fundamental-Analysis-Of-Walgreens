@@ -1,0 +1,23 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from pandas_datareader import data as web
+
+def get_adj_close(ticker, start, end):
+    start = start
+    end = end
+    info = web.DataReader(ticker, data_source='yahoo', start=start, end=end)['Adj Close']
+    return pd.DataFrame(info)
+
+
+WBA= get_adj_close('wba', '1/1/2016', '31/03/2020')
+
+WBA['20 Day MA'] = WBA['Adj Close'].rolling(window=20).mean()
+WBA['20 Day STD'] = WBA['Adj Close'].rolling(window=20).std()
+
+WBA['Upper Band'] = WBA['20 Day MA'] + (WBA['20 Day STD'] * 2)
+WBA['Lower Band'] = WBA['20 Day MA'] - (WBA['20 Day STD'] * 2)
+
+WBA[['Adj Close', '20 Day MA', 'Upper Band', 'Lower Band']].plot(figsize=(12,6))
+plt.title('Bollinger Band for WBA')
+plt.ylabel('Price (USD)')
+plt.show()
